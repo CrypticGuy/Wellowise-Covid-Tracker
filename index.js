@@ -16,6 +16,13 @@ app.get('/delhiMap', function(req, res) {
     })
 })
 
+app.get('/stateMap', function(req, res) {
+    fs.readFile('./state_map.json', (err, data) => {
+        if (err) throw err
+        res.send(JSON.parse(data))
+    })
+})
+
 app.get('/delhiDummyPoint', function(req, res) {
     fs.readFile('./delhiDummyPoint.json', (err, data) => {
         if (err) throw err
