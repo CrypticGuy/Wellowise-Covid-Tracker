@@ -26,8 +26,7 @@ fs.readFile('./delhiMap.json', (err, data) => {
 })
 
 async function calculatePointAndTheirPolygons(arr) {
-    //const pointsData = await getPoints()
-    //console.log("Points: ", pointsData)
+
     let features = arr.features
     getPoints()
         .then((data) => {
@@ -47,10 +46,5 @@ async function calculatePointAndTheirPolygons(arr) {
             updateDistrict(toReturn)
         })
         .catch(err => console.log(err))
-    //await getPoints().then((data) => console.log("Points Data: ", data))
-    //console.log(features)
-    
-    //for(let i = 0; i < pointsData.length; i++) {
-    //    let pt = point([pointsData[i].lng, pointsData[i].lat]);
-    //}
+
 }
