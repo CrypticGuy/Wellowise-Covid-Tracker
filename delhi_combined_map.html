@@ -3,48 +3,71 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
-    <title>Mashups with google.maps.Data</title>
+    <link rel='stylesheet' href="./normalize.css" />
+    <link rel='stylesheet' href="./skeleton.css" />
+    <title>Wellowise Covid Tracker</title>
     <style>
-      html, body, #map { height: 100%; margin: 0; padding: 0; overflow: hidden; }
-        .nicebox {
+        html, body, #map { height: 100%; margin: 0; padding: 0; overflow: hidden; }
+        .floatingPanel  {
+          width: 100%;
           position: absolute;
-          text-align: center;
-          font-family: "Roboto", "Arial", sans-serif;
-          font-size: 13px;
+          padding-top: 5px;
+          bottom: 0px;
           z-index: 5;
-          box-shadow: 0 4px 6px -4px #333;
-          padding: 5px 10px;
           background: rgb(255,255,255);
           background: linear-gradient(to bottom,rgba(255,255,255,1) 0%,rgba(245,245,245,1) 100%);
           border: rgb(229, 229, 229) 1px solid;
+          font-size: 13px;
+        }
+        .displayLabelBox {
+          height: auto;
+          width: 400px;
+          position: absolute;
+          left: 50%;
+          margin-left: -200px;
+          top: 10px;
+        }
+        .nicebox {
+          position: relative;
+          z-index: 5;
+          background: rgb(255,255,255);
+          background: linear-gradient(to bottom,rgba(255,255,255,1) 0%,rgba(245,245,245,1) 100%);
+          border: rgb(229, 229, 229) 1px solid;
+          font-size: 13px;
+          text-align: center;
+          font-family: "Roboto", "Arial", sans-serif;
+          font-size: 13px;
+          
         }
         #controls {
-          top: 10px;
-          left: 110px;
-          width: 360px;
+          bottom: 10px;
+          left: 20px;
+          width: auto;
           height: 45px;
         }
         #data-box {
           top: 10px;
-          left: 500px;
+          left: 20px;
           height: 45px;
           line-height: 45px;
           display: none;
         }
-        #census-variable {
-          width: 360px;
-          height: 20px;
-        }
-        #legend { display: flex; display: -webkit-box; padding-top: 7px }
+        
+        #legend { display: flex; padding-top: 7px; }
         .color-key {
-          background: linear-gradient(to left,
-            hsl(5, 69%, 54%) 0%,
-            hsl(29, 71%, 51%) 17%,
-            hsl(54, 74%, 47%) 33%,
-            hsl(78, 76%, 44%) 50%,
-            hsl(102, 78%, 41%) 67%,
-            hsl(127, 81%, 37%) 83%,
-            hsl(151, 83%, 34%) 100%);
+          
+          /*background: linear-gradient(to left,  */
+          /*  hsl(5, 69%, 54%) 0%, */
+          /*  hsl(29, 71%, 51%) 17%, */
+          /*  hsl(54, 74%, 47%) 33%, */
+          /*  hsl(78, 76%, 44%) 50%, */
+          /*  hsl(102, 78%, 41%) 67%, */
+          /*  hsl(127, 81%, 37%) 83%, */
+          /*  hsl(151, 83%, 34%) 100%); */
+          background: linear-gradient(to right, 
+            #E1F5FE 0%,
+            #01579B 100%
+          );
           flex: 1;
           -webkit-box-flex: 1;
           margin: 0 5px;
@@ -55,31 +78,50 @@
         #data-value { font-size: 2.0em; font-weight: bold }
         #data-label { font-size: 2.0em; font-weight: normal; padding-right: 10px; }
         #data-label:after { content: ':' }
-        #data-caret { margin-left: -5px; display: none; font-size: 14px; width: 14px}
+        #data-caret { margin-left: -5px; display: block; font-size: 14px; width: 14px}
     </style>
   </head>
   <body>
-    <div id="controls" class="nicebox">
-      <div>
-      <select id="census-variable">
-        <option value="http://localhost:3000/delhiDistrictData">Wellowise covid risk-factor</option>
-        <<option value="https://api.covid19india.org/data.json">Total Number of Covid Cases in India - State wise</option>
-        <!--<option value="https://storage.googleapis.com/mapsdevsite/json/DP05_0017E">Median age</option>
-        <option value="https://storage.googleapis.com/mapsdevsite/json/DP05_0001E">Total population</option>
-        <option value="https://storage.googleapis.com/mapsdevsite/json/DP02_0016E">Average family size</option>
-        <option value="https://storage.googleapis.com/mapsdevsite/json/DP03_0088E">Per-capita income</option>
-        -->
-      </select>
-      </div>
-      <div id="legend">
-        <div id="census-min">min</div>
-        <div class="color-key"><span id="data-caret">&#x25c6;</span></div>
-        <div id="census-max">max</div>
+    <div class="floatingPanel">
+      <!--<div id="controls" class="container">-->
+      <div class="container">
+        <div class="row">
+            <div class="six columns">
+                <label for="exampleRecipientInput">Displaying Data</label>
+                <select id="census-variable" class="u-full-width">
+                    <option value=0>Wellowise covid risk-factor</option>
+                    <option value=1>Total Number of Covid Cases in India - State wise</option>
+                  <!--<option value="https://storage.googleapis.com/mapsdevsite/json/DP05_0017E">Median age</option>
+                  <option value="https://storage.googleapis.com/mapsdevsite/json/DP05_0001E">Total population</option>
+                  <option value="https://storage.googleapis.com/mapsdevsite/json/DP02_0016E">Average family size</option>
+                  <option value="https://storage.googleapis.com/mapsdevsite/json/DP03_0088E">Per-capita income</option>
+                  -->
+                </select> 
+            </div>
+          <div class="six columns">
+              <label for="exampleRecipientInput">Available Options</label>
+              <select id="data-option" class="u-full-width">
+                <!--<option value="https://storage.googleapis.com/mapsdevsite/json/DP05_0017E">Median age</option>
+                <option value="https://storage.googleapis.com/mapsdevsite/json/DP05_0001E">Total population</option>
+                <option value="https://storage.googleapis.com/mapsdevsite/json/DP02_0016E">Average family size</option>
+                <option value="https://storage.googleapis.com/mapsdevsite/json/DP03_0088E">Per-capita income</option>
+                -->
+              </select> 
+          </div>
+        </div>
+        <div class="row">
+          <div id="legend">
+            <div id="census-min">min</div>
+            <div class="color-key"><span id="data-caret">&#x25c6;</span></div>
+            <div id="census-max">max</div>
+          </div>
+        </div>
       </div>
     </div>
-    <div id="data-box" class="nicebox">
-      <label id="data-label" for="data-value"></label>
-      <span id="data-value"></span>
+    <div class="displayLabelBox">
+      <div id="data-box" class="nicebox">
+          <span id="data-label" for="data-value"></span><span id="data-value"></span>
+        </div>
     </div>
     <div id="map"></div>
     <script>
@@ -95,24 +137,30 @@
         'stylers': [{'visibility': 'on'}, {'color': '#bfd4ff'}]
       }];
       var map;
-      var magMin = 0, magMax = 800;
+      var magMin = 0, magMax = 0;
       var maxZoomLevel = 11;
       var minZoomLevel = 6;
 
       // Variables
       var dataLoadSources = ['http://localhost:3000/delhiDistrictData', 'https://api.covid19india.org/data.json']
+      var mapLayers = ['http://localhost:3000/delhiMap', 'http://localhost:3000/stateMap']
+      var infoText = [['Wellowise Risk Factor'], ['Confirmed Cases', 'Active Cases', 'Deaths', 'Recovered']]
+      var fetchID = [['avg'], ['confirmed', 'active', 'deaths', 'recovered']]
+      var currentLayer = [];
+      var currentDataSource = 0;
+      var currentSubDataSource = 0;
+
 
       function initMap() {
 
         // load the map
         map = new google.maps.Map(document.getElementById('map'), {
           center: {lat: 28.7041, lng: 77.1025},
-          zoom: 6,
+          zoom: 10,
           styles: mapStyle,
           minZoom: 4,
           maxZoom: 12
         });
-
 
         // set up the style rules and events for google.maps.Data
         map.data.setStyle(styleFeature);
@@ -122,20 +170,187 @@
         // wire up the button
         var selectBox = document.getElementById('census-variable');
         google.maps.event.addDomListener(selectBox, 'change', function() {
-          //cleardistrictData();
-          loadDataToDisplay(selectBox.options[selectBox.selectedIndex].value);
+          loadMapsWithVariable(selectBox.options[selectBox.selectedIndex].value)
+          currentDataSource = selectBox.options[selectBox.selectedIndex].value
         });
 
-       loadMapShapesIndia()
+        var dataBox = document.getElementById('data-option')
+        google.maps.event.addDomListener(dataBox, 'change', function() {
+          loadDataToDisplay(currentDataSource, dataBox.options[dataBox.selectedIndex].value)
+          currentSubDataSource = dataBox.options[dataBox.selectedIndex].value
+        })
+        
+       loadMapsWithVariable(0)
+       //loadDataToDisplay(0);
        google.maps.event.addListener(map, 'zoom_changed', function() {
-         console.log(map.getZoom())
+         //console.log(map.getZoom())
           if (map.getZoom() < minZoomLevel) map.setZoom(minZoomLevel);
           if (map.getZoom() > maxZoomLevel) map.setZoom(maxZoomLevel)
         });
         // state polygons only need to be loaded once, do them now
       }
 
-      function loadDelhiPoints() {
+
+
+      function loadMapsWithVariable(variable) {
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", mapLayers[variable]);
+        xhr.onload = function() {
+          if (currentLayer != undefined) {for (var i = 0; i < currentLayer.length; i++) map.data.remove(currentLayer[i]);}
+          var polygonLayer = JSON.parse(xhr.responseText);
+          console.log("Polygon: ", polygonLayer)
+          currentLayer = map.data.addGeoJson(polygonLayer,{ idPropertyName: 'classifier'})
+          //map.fitBounds(currentLayer);
+          //, () => {
+          dataSelect = document.getElementById('data-option');
+          dataSelect.innerHTML = ""
+          for (let i = 0; i < infoText[variable].length; i++) {
+            let option = document.createElement('option')
+            option.value = i
+            option.text = infoText[variable][i]
+            dataSelect.appendChild(option)
+          }
+          console.log("HERE!")
+          loadDataToDisplay(variable)
+          //});
+        };
+        xhr.send();
+      }
+
+      function loadDataToDisplay(variable, sub=0) {
+        cleardistrictData()
+        var xhr = new XMLHttpRequest();
+        magMin = 0
+        magMax = 0
+        xhr.open("GET", dataLoadSources[variable]);
+        xhr.onload = function() {
+          var loadedData = []
+          var districtData = JSON.parse(xhr.responseText);
+          if (variable == 0) {
+          } else if (variable == 1) {
+            districtData = districtData.statewise
+          }
+          console.log(districtData)
+          districtData.shift();
+          //console.log(districtData)
+          districtData.forEach(function(row) {
+
+            var targetVariable;
+            var stateId;
+
+            if (variable == 0) {
+              targetVariable = row[fetchID[variable][sub]]
+              stateId = row.district;
+            }
+            else if (variable == 1) {
+              targetVariable = row[fetchID[variable][sub]]
+              stateId = row.state
+            }
+
+            
+            if (parseInt(targetVariable) < magMin) {
+              magMin = parseInt(targetVariable)
+            }
+            if (parseInt(targetVariable) > magMax) {
+              console.log(targetVariable, stateId)
+              magMax = parseInt(targetVariable);
+            }
+
+            try {
+              loadedData.push([stateId, targetVariable])
+              //map.data
+              //.getFeatureById(stateId)
+              //.setProperty('risk_factor', targetVariable);  
+            } catch (error) {
+              console.log(error)
+              console.log("Error: ", stateId)
+            }
+            
+          });
+
+          loadedData.forEach((v, i) => {
+            try {
+              map.data
+              .getFeatureById(v[0])
+              .setProperty('risk_factor', v[1]);  
+            } catch(err) {
+              console.log("Error: ", v[0])
+            }
+          })
+          document.getElementById('census-min').textContent = magMin.toLocaleString();
+          document.getElementById('census-max').textContent = magMax.toLocaleString();
+          console.log(magMax, magMin)
+        };
+        xhr.send();
+      }
+
+      function cleardistrictData() {
+        magMin = Number.MAX_VALUE;
+        magMax = -Number.MAX_VALUE;
+        map.data.forEach(function(row) {
+          row.setProperty('risk_factor', undefined);
+        });
+        document.getElementById('data-box').style.display = 'none';
+        document.getElementById('data-caret').style.display = 'none';
+      }
+
+      function styleFeature(feature) {
+        var low = [199, 94, 94];
+        var high = [206, 99, 31]; 
+
+        var delta = (feature.getProperty('risk_factor') - magMin) /
+            (magMax - magMin);
+        //console.log("Delta", delta)
+        var color = [];
+        for (var i = 0; i < 3; i++) {
+          // calculate an integer color based on the delta
+          color[i] = (high[i] - low[i]) * delta + low[i];
+        }
+        var showRow = true;
+        var outlineWeight = 0.5, zIndex = 1;
+        if (feature.getProperty('state') === 'hover') {
+          outlineWeight = zIndex = 2;
+        }
+
+        return {
+          strokeWeight: outlineWeight,
+          strokeColor: '#000',
+          zIndex: zIndex,
+          fillColor: 'hsl(' + color[0] + ',' + color[1] + '%,' + color[2] + '%)',
+          fillOpacity: 0.9,
+          visible: showRow
+        };
+      }
+
+      function mouseInToRegion(e) {
+        // set the hover state so the setStyle function can change the border
+        e.feature.setProperty('state', 'hover');
+
+        var percent = (e.feature.getProperty('risk_factor') - magMin) /
+            (magMax - magMin) * 100;
+
+        // update the label
+        document.getElementById('data-label').textContent =
+            e.feature.getProperty('classifier');
+        document.getElementById('data-value').textContent =
+            e.feature.getProperty('risk_factor')
+        document.getElementById('data-box').style.display = 'block';
+        document.getElementById('data-caret').style.display = 'block';
+        document.getElementById('data-caret').style.paddingLeft = percent + '%';
+      }
+
+      function mouseOutOfRegion(e) {
+        e.feature.setProperty('state', 'normal');
+      }
+
+    </script>
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB52Yu60L0QBR2ONm3v1BKSnCg5MbNRr0w&region=IN&callback=initMap">
+    </script>
+  </body>
+</html>
+<!--
+  function loadDelhiPoints() {
         function loadData() {
           var xhttp = new XMLHttpRequest();
           xhttp.onreadystatechange = function() {
@@ -167,155 +382,25 @@
         }
       }
 
-      /** Loads the state boundary polygons from a GeoJSON source. */
-      function loadMapShapesDelhi() {
-        map.data.loadGeoJson('http://localhost:3000/delhiMap',{ idPropertyName: 'DISTRICT'});
-        google.maps.event.addListenerOnce(map.data, 'addfeature', function() {
-          google.maps.event.trigger(document.getElementById('census-variable'),
-              'change');
+    /** Loads the state boundary polygons from a GeoJSON source. */
+      /*function loadMapShapesDelhi(variable) {
+
+        map.data.loadGeoJson('http://localhost:3000/delhiMap',{ idPropertyName: 'classifier'}, () => {
+          loadDataToDisplay(0);
         });
+        //google.maps.event.addListenerOnce(map.data, 'addfeature', function() {
+        //  google.maps.event.trigger(document.getElementById('census-variable'),
+        //      'change');
+        //});
       }
 
-      function loadMapShapesIndia() {
-        map.data.loadGeoJson('http://localhost:3000/stateMap',{ idPropertyName: 'classifier'});
-        google.maps.event.addListenerOnce(map.data, 'addfeature', function() {
-          google.maps.event.trigger(document.getElementById('census-variable'),
-              'change');
+      function loadMapShapesIndia(variable) {
+        map.data.loadGeoJson('http://localhost:3000/stateMap',{ idPropertyName: 'classifier'}, () => {
+          loadDataToDisplay(variable);
         });
-      }
-
-      function loadDataToDisplay(variable) {
-        var xhr = new XMLHttpRequest();
-        //xhr.open("GET", "http://localhost:3000/delhiDistrictData");
-        xhr.open("GET", dataLoadSources[1]);
-        xhr.onload = function() {
-          var districtData = JSON.parse(xhr.responseText);
-          districtData = districtData.statewise
-          districtData.shift(); // the first row contains column names
-          console.log(districtData)
-          districtData.forEach(function(row) {
-            //var targetVariable = Math.random()*10
-            var targetVariable = row.confirmed
-            //var targetVariable = row.avg
-            var stateId = row.state;
-            console.log(targetVariable, stateId)
-            // keep track of min and max values
-            if (targetVariable < magMin) {
-              magMin = targetVariable;
-            }
-            if (targetVariable > magMax) {
-              magMax = targetVariable;
-            }
-
-            // update the existing row with the new data
-            try {
-              map.data
-              .getFeatureById(stateId)
-              .setProperty('risk_factor', targetVariable);  
-            } catch (error) {
-              console.log("Error: ", stateId)
-            }
-            
-          });
-
-          // update and display the legend
-          document.getElementById('census-min').textContent = magMin.toLocaleString();
-          document.getElementById('census-max').textContent = magMax.toLocaleString();
-        };
-        xhr.send();
-      }
-
-      /** Removes census data from each shape on the map and resets the UI. */
-      function cleardistrictData() {
-        magMin = Number.MAX_VALUE;
-        magMax = -Number.MAX_VALUE;
-        map.data.forEach(function(row) {
-          row.setProperty('risk_factor', undefined);
-        });
-        document.getElementById('data-box').style.display = 'none';
-        document.getElementById('data-caret').style.display = 'none';
-      }
-
-      /**
-       * Applies a gradient style based on the 'census_variable' column.
-       * This is the callback passed to data.setStyle() and is called for each row in
-       * the data set.  Check out the docs for Data.StylingFunction.
-       *
-       * @param {google.maps.Data.Feature} feature
-       */
-      function styleFeature(feature) {
-        var high = [5, 69, 54];  // color of smallest datum
-        var low = [151, 83, 34];   // color of largest datum
-
-        // delta represents where the value sits between the min and max
-        var delta = (feature.getProperty('risk_factor') - magMin) /
-            (magMax - magMin);
-
-        var color = [];
-        for (var i = 0; i < 3; i++) {
-          // calculate an integer color based on the delta
-          color[i] = (high[i] - low[i]) * delta + low[i];
-        }
-
-        // determine whether to show this shape or not
-        var showRow = true;
-        //if (feature.getProperty('census_variable') == null ||
-        //    isNaN(feature.getProperty('census_variable'))) {
-        //  showRow = false;
-        //}
-
-        var outlineWeight = 0.5, zIndex = 1;
-        if (feature.getProperty('state') === 'hover') {
-          outlineWeight = zIndex = 2;
-        }
-
-        return {
-          strokeWeight: outlineWeight,
-          strokeColor: '#fff',
-          zIndex: zIndex,
-          fillColor: 'hsl(' + color[0] + ',' + color[1] + '%,' + color[2] + '%)',
-          fillOpacity: 0.75,
-          visible: showRow
-        };
-      }
-
-      /**
-       * Responds to the mouse-in event on a map shape (state).
-       *
-       * @param {?google.maps.MouseEvent} e
-       */
-      function mouseInToRegion(e) {
-        // set the hover state so the setStyle function can change the border
-        e.feature.setProperty('state', 'hover');
-
-        var percent = (e.feature.getProperty('risk_factor') - magMin) /
-            (magMax - magMin) * 100;
-
-        // update the label
-        document.getElementById('data-label').textContent =
-            e.feature.getProperty('classifier');
-        document.getElementById('data-value').textContent =
-            e.feature.getProperty('risk_factor').toLocaleString();
-        document.getElementById('data-box').style.display = 'block';
-        document.getElementById('data-caret').style.display = 'block';
-        document.getElementById('data-caret').style.paddingLeft = percent + '%';
-      }
-
-      /**
-       * Responds to the mouse-out event on a map shape (state).
-       *
-       * @param {?google.maps.MouseEvent} e
-       */
-      function mouseOutOfRegion(e) {
-        // reset the hover state, returning the border to normal
-        e.feature.setProperty('state', 'normal');
-      }
-
-      
-
-    </script>
-    <script async defer
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB52Yu60L0QBR2ONm3v1BKSnCg5MbNRr0w&callback=initMap">
-    </script>
-  </body>
-</html>
+        //google.maps.event.addListenerOnce(map.data, 'addfeature', function() {
+        //  google.maps.event.trigger(document.getElementById('census-variable'),
+        //      'change');
+        //});
+      }*/  
+-->

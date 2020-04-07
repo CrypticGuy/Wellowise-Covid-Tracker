@@ -160,7 +160,7 @@
             },
             "properties": {
                 "OBJECTID": 99,
-                "DISTRICT": "Central",
+                "classifier": "Central",
                 "STATE": "Nation Capital Region",
                 "mag": 3
             }
@@ -404,7 +404,7 @@
             },
             "properties": {
                 "OBJECTID": 167,
-                "DISTRICT": "East",
+                "classifier": "East",
                 "STATE": "Nation Capital Region",
                 "mag": 4
             }
@@ -680,7 +680,7 @@
             },
             "properties": {
                 "OBJECTID": 417,
-                "DISTRICT": "North East",
+                "classifier": "North East",
                 "STATE": "Nation Capital Region",
                 "mag": 2
             }
@@ -928,7 +928,7 @@
             },
             "properties": {
                 "OBJECTID": 413,
-                "DISTRICT": "North",
+                "classifier": "North",
                 "STATE": "Nation Capital Region",
                 "mag": 9
             }
@@ -1356,7 +1356,7 @@
             },
             "properties": {
                 "OBJECTID": 420,
-                "DISTRICT": "North West",
+                "classifier": "North West",
                 "STATE": "Nation Capital Region",
                 "mag": 10
             }
@@ -1492,7 +1492,7 @@
             },
             "properties": {
                 "OBJECTID": 411,
-                "DISTRICT": "New Delhi",
+                "classifier": "New Delhi",
                 "STATE": "Nation Capital Region",
                 "mag": 1
             }
@@ -1888,7 +1888,7 @@
             },
             "properties": {
                 "OBJECTID": 544,
-                "DISTRICT": "South",
+                "classifier": "South",
                 "STATE": "Nation Capital Region",
                 "mag": 6
             }
@@ -2396,7 +2396,7 @@
             },
             "properties": {
                 "OBJECTID": 550,
-                "DISTRICT": "South West",
+                "classifier": "South West",
                 "STATE": "Nation Capital Region",
                 "mag": 2
             }
@@ -2676,7 +2676,7 @@
             },
             "properties": {
                 "OBJECTID": 613,
-                "DISTRICT": "West",
+                "classifier": "West",
                 "STATE": "Nation Capital Region",
                 "mag": 8
             }

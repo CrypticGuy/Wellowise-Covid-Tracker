@@ -62,7 +62,7 @@ const getDistrictWiseData = () => {
     return new Promise((resolve, reject) => {
         pool.query(text, (err, data) => {
             if (err) throw err
-            console.log(data.rows)
+            //console.log(data.rows)
             resolve(data.rows)
         })
     })
