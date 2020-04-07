@@ -1,9 +1,10 @@
 const express               = require('express')
 const cors                  = require('cors')
 const app                   = express()
-const port                  = 3000
+const port                  = 8080
+const HOST                  = '0.0.0.0'
 const fs                    = require('fs')
-const {getDistrictWiseData} = require('./pool')
+//const {getDistrictWiseData} = require('./pool')
 
 app.use(cors())
 //app.use(function(req, res, next) {
@@ -39,7 +40,12 @@ app.get('/delhiDummyPoint', function(req, res) {
 })
 
 app.get('/delhiDistrictData', function(req, res) {
-    getDistrictWiseData().then((resp) => res.json(resp))
+    //getDistrictWiseData().then((resp) => res.json(resp))
+    res.send("Currently under works!")
 })
 
-app.listen(port, () => console.log(`Wellowise-Covid-Tracker listening at http://localhost:${port}`))
+app.get('/', (req, res) => {
+    res.send("Wellowise Covid Tracker - Node JS - Vasu Goel")
+})
+
+app.listen(port, HOST, () => console.log(`Wellowise-Covid-Tracker listening at http://${HOST}:${port}`))
