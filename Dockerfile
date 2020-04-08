@@ -1,12 +1,13 @@
 FROM node:10
 
-
-COPY . /app
-WORKDIR /app
-
 COPY package*.json ./
+
+COPY . .
+
+WORKDIR /
+
+EXPOSE 8090
 
 RUN npm ci --only=production
 
-EXPOSE 8090
 CMD ["node", "index.js"]
