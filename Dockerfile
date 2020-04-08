@@ -1,7 +1,3 @@
-FROM ubuntu:latest 
-RUN apt-get update -y 
-RUN apt-get install -y nginx 
-
 FROM node:10
 
 WORKDIR /app
