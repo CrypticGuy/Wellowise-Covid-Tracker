@@ -48,4 +48,4 @@ app.get('/', (req, res) => {
     res.send("Wellowise Covid Tracker - Node JS - Vasu Goel")
 })
 
-app.listen(port, () => console.log(`Wellowise-Covid-Tracker listening at http://${HOST}:${port}`))
+app.listen(port, () => console.log(`Wellowise-Covid-Tracker listening at ${port}`))
