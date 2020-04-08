@@ -8,5 +8,5 @@ RUN npm ci --only=production
 
 COPY . .
 
-CMD ["node", "index.js"]
 EXPOSE 8090
+CMD ["node", "index.js"]
