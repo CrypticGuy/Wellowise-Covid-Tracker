@@ -1,7 +1,7 @@
 const express               = require('express')
 const cors                  = require('cors')
 const app                   = express()
-const port                  = 8080
+let port                  =  process.env.PORT || '8080'
 //const HOST                  = '0.0.0.0'
 const fs                    = require('fs')
 //const {getDistrictWiseData} = require('./pool')
