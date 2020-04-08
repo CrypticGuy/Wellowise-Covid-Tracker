@@ -2,11 +2,11 @@ const express               = require('express')
 const cors                  = require('cors')
 const app                   = express()
 const port                  = 8080
-const HOST                  = '0.0.0.0'
+//const HOST                  = '0.0.0.0'
 const fs                    = require('fs')
 //const {getDistrictWiseData} = require('./pool')
 
-app.use(cors())
+//app.use(cors())
 //app.use(function(req, res, next) {
 //    res.header("Access-Control-Allow-Origin", "*");
 //    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
@@ -48,4 +48,4 @@ app.get('/', (req, res) => {
     res.send("Wellowise Covid Tracker - Node JS - Vasu Goel")
 })
 
-app.listen(port, HOST, () => console.log(`Wellowise-Covid-Tracker listening at http://${HOST}:${port}`))
+app.listen(port, () => console.log(`Wellowise-Covid-Tracker listening at http://${HOST}:${port}`))
