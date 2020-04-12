@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>National Timeline</title>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="https://d3js.org/d3-geo.v1.min.js"></script>
+    <script src="https://unpkg.com/topojson@3"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chroma-js/2.1.0/chroma.min.js" integrity="sha256-gX8uuyxN8stSMHWO9arnnKyenTOALaVAcVB3b6P87e4=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.25.6/d3-legend.js"></script>
+    <style>
+        path.path-region:hover {
+            /*fill: #000;*/
+            stroke: #888;
+            stroke-width: 4;
+        }
+
+        rect.swatch {
+            stroke: #000;
+        }
+
+        rect.swatch:hover {
+            stroke: #fff;
+        }
+    </style>
+</head>
+<body>
+    <svg id="wellowise-svg" width="500" height="500" viewBox="0 0 500 500"></svg>
+    <svg id="wellowise-legend" width="300" height="500" viewBox="0 0 300 500"></svg>
+    <h2 class="wellowise-data-label" id="wellowise-date"></h2>
+    <script>
+        // CONSTANTS
+        const extremeColors = ["#fff", "#D50000"]
+        f = chroma.scale([extremeColors[0], extremeColors[1]]).gamma(0.6).domain([0,2000]);
+        const MAX = 2000
+        const MIN = 0
+        var fetchedJSON = {}
+        var mapData = {}
+        var myInterval;
+        var onceTouchedRegion = null
+        const propertyField = "st_nm"
+        var cummulativeData = []
+        var dateRanges = []
+        const stateObject = {
+            "TT": "Total",
+            "MH": "Maharashtra",
+            "TN": "Tamil Nadu",
+            "DL": "Delhi",
+            "TG": "Telangana",
+            "RJ": "Rajasthan",
+            "KL": "Kerala",
+            "UP": "Uttar Pradesh",
+            "AP": "Andhra Pradesh",
+            "MP": "Madhya Pradesh",
+            "KA": "Karnataka",
+            "GJ": "Gujarat",
+            "HR": "Haryana",
+            "JK": "Jammu and Kashmir",
+            "PB": "Punjab",
+            "WB": "West Bengal",
+            "OR": "Odisha",
+            "BR": "Bihar",
+            "UT": "Uttarakhand",
+            "AS": "Assam",
+            "CH": "Chandigarh",
+            "HP": "Himachal Pradesh",
+            "LA": "Ladakh",
+            "AN": "Andaman and Nicobar Islands",
+            "CT": "Chhattisgarh",
+            "GA": "Goa",
+            "PY": "Puducherry",
+            "JH": "Jharkhand",
+            "MN": "Manipur",
+            "MZ": "Mizoram",
+            "AR": "Arunachal Pradesh",
+            "DN": "Dadra and Nagar Haveli",
+            "TR": "Tripura",
+            "DD": "Daman and Diu",
+            "LD": "Lakshadweep",
+            "ML": "Meghalaya",
+            "NL": "Nagaland",
+            "SK": "Sikkim"
+        }
+        const stateReverseMap = {
+            "Total": "TT",
+            "Maharashtra": "MH",
+            "Tamil Nadu": "TN",
+            "Delhi": "DL",
+            "Telangana": "TG",
+            "Rajasthan": "RJ",
+            "Kerala": "KL",
+            "Uttar Pradesh": "UP",
+            "Andhra Pradesh": "AP",
+            "Madhya Pradesh": "MP",
+            "Karnataka": "KA",
+            "Gujarat": "GJ",
+            "Haryana": "HR",
+            "Jammu and Kashmir": "JK",
+            "Punjab": "PB",
+            "West Bengal": "WB",
+            "Odisha": "OR",
+            "Bihar": "BR",
+            "Uttarakhand": "UT",
+            "Assam": "AS",
+            "Chandigarh": "CH",
+            "Himachal Pradesh": "HP",
+            "Ladakh": "LA",
+            "Andaman and Nicobar Islands": "AN",
+            "Chhattisgarh": "CT",
+            "Goa": "GA",
+            "Puducherry": "PY",
+            "Jharkhand": "JH",
+            "Manipur": "MN",
+            "Mizoram": "MZ",
+            "Arunachal Pradesh": "AR",
+            "Dadra and Nagar Haveli": "DN",
+            "Tripura": "TR",
+            "Daman and Diu": "DD",
+            "Lakshadweep": "LD",
+            "Meghalaya": "ML",
+            "Nagaland": "NL",
+            "Sikkim": "SK"
+        }
+
+        function fetchTimelineData() {
+            let xhttp = new XMLHttpRequest()
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    fetchedJSON = JSON.parse(xhttp.responseText)
+                    //console.log(fetchedJSON)
+                    compileCummulativeData()
+                    runAnimation()
+                }
+            }
+            xhttp.open("GET", "https://api.covid19india.org/states_daily.json", true)
+            xhttp.send()
+        }
+
+        function compileCummulativeData() {
+            cummulativeData = []
+            dateRanges = []
+            let cummulativeDatum = {}
+            Object.keys(fetchedJSON.states_daily[0]).forEach((v, i) => {
+                if (!(v == "date" || v == "status"))
+                cummulativeDatum[v] = 0
+                else cummulativeDatum[v] = fetchedJSON.states_daily[0][v]
+            })
+            let tempDatum = JSON.parse(JSON.stringify(cummulativeDatum))
+            cummulativeData.push(tempDatum)
+            for (let i = 0; i < fetchedJSON.states_daily.length; i+=3) {
+                Object.keys(fetchedJSON.states_daily[i]).forEach((v, ind) => {
+                    if (!(v == "date" || v == "status")) {
+                        let val = fetchedJSON.states_daily[i][v]
+                        if (val != "") cummulativeDatum[v] += parseInt(fetchedJSON.states_daily[i][v])
+                        else cummulativeDatum[v] += 0
+                    } 
+                    else if (v == "date") {
+                        
+                        cummulativeDatum[v] = fetchedJSON.states_daily[i][v]
+                        dateRanges.push(cummulativeDatum[v])
+                        
+                    }
+                    else cummulativeDatum[v] = fetchedJSON.states_daily[i][v]
+                })
+                let tempDatum = JSON.parse(JSON.stringify(cummulativeDatum))
+                cummulativeData.push(tempDatum)
+            }
+            console.log(dateRanges)   
+        }
+
+        function changeColor(data, i) {
+            if (i == -1 || data == null) clearInterval(myInterval)
+            try {
+                document.getElementById("wellowise-date").textContent = data['date']
+                Object.keys(data).forEach((v, i) => {
+                    try {
+                        d3.select(`path#${v.toUpperCase()}`).attr('fill',f(data[v])).duration(600)
+                    } catch {
+                        //console.log("err")
+                    }
+                }) 
+            } finally {
+                i += 1
+                return i
+            }
+        }
+
+        function runAnimation() {
+            let i = 0
+            myInterval = setInterval(function() {
+                //console.log(i)
+                try {
+                    i = changeColor(cummulativeData[i], i)
+                } catch {
+                    changeColor(null, -1)
+                }
+            }, 800)
+        }
+        
+        function handleMouseover(name) {
+            setSelectedRegion(name)
+            onceTouchedRegion.setAttr('fill', "#fff")
+        }
+
+        function setSelectedRegion(name) {
+            if (name === null) onceTouchedRegion.setAttr('fill', "#000")
+            else onceTouchedRegion.setAttr('fill', "#fff")
+        }
+        
+        function fetchMap() {
+            let xhttp = new XMLHttpRequest()
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    fetchTimelineData()
+                    mapData = JSON.parse(xhttp.responseText)
+                    //console.log(mapData)
+                    let topology = topojson.feature(
+                        mapData,
+                        mapData.objects["india"]
+                    );
+                    //console.log(topology)
+                    //console.log(topology)
+                    const svg = d3.select('#wellowise-svg')
+                    const width = +svg.attr('width')
+                    const height = +svg.attr('height')
+                    //console.log(width, height)
+                    //const projection = d3.geoEqualEarth()
+                    const projection = d3.geoMercator()
+                    projection.fitSize([width, height], topology)
+                    const path = d3.geoPath(projection);
+                    //console.log(topology.features)
+                    //console.log(path) 
+                    svg
+                    .append('g')
+                    .attr('class', 'w-states')
+                    .selectAll('path')
+                    .data(topology.features)
+                    .enter()
+                    .append('path')
+                    .attr('d', path)
+                    .attr('class', 'path-region')
+                    .attr('fill', function (d) {
+                        //console.log(d.properties)
+                        return "#fff"
+                    })
+                    .attr('id', function(d) {
+                        return stateReverseMap[d.properties[propertyField]]
+                    })
+                    .attr('pointer-events', 'all')
+                    .on('mouseover', (d) => {
+                        //handleMouseover(d.properties[propertyField]);
+                        //onceTouchedRegion = this
+                        //console.log("Enter:", onceTouchedRegion)
+                    })
+                    .on('mouseout', (d) => {
+                        //setSelectedRegion(null);
+                        //if (onceTouchedRegion === this) onceTouchedRegion = null;
+                        //console.log("Leave: ", onceTouchedRegion)
+                    })
+                    .on('touchstart', (d) => {
+                        
+                        //if (onceTouchedRegion === d) onceTouchedRegion = null;
+                        //else 
+                        onceTouchedRegion = d;
+                        
+                    })
+                    .on('click', (d) => {
+                    //if (onceTouchedRegion) {
+                    //    return;
+                    //}
+                    //if (mapMeta.mapType === MAP_TYPES.STATE) {
+                    //    return;
+                    //}
+                    //changeMap(d.properties[propertyField], mapMeta.mapType);
+                    })
+                    .style('cursor', 'pointer')
+                    .append('title')
+                    .text(function (d) {
+                        const value = d.properties[propertyField]
+                        //console.log(value)
+                    //return (
+                    //    Number(
+                    //    parseFloat(100 * (value / (statistic.total || 0.001))).toFixed(2)
+                    //    ).toString() +
+                    //    '% from ' +
+                    //    toTitleCase(d.properties[propertyField])
+                    //);
+                    });
+                    
+                    svg
+                    .append('path')
+                    .attr('stroke', '#0008')
+                    .attr('fill', 'none')
+                    .attr('stroke-width', 2)
+                    .attr(
+                    'd',
+                    path(topojson.mesh(mapData, mapData.objects['india']))
+                    );
+                }
+            }
+            xhttp.open("GET", "https://raw.githubusercontent.com/covid19india/covid19india-react/master/public/maps/india.json", true)
+            xhttp.send()
+        }
+
+        function setLegend() {
+                                
+            let linear = d3.scaleLinear()
+            .domain([0,2000])
+            .range([extremeColors[0], extremeColors[1]]);
+
+            let svgLegend = d3.select("svg#wellowise-legend");
+
+            svgLegend.append("g")
+            .attr("class", "legendLinear")
+            .attr("transform", "translate(0, 0)");  
+
+            let legendLinear = d3.legendColor()
+            .shapeWidth(50)
+            .cells(11)
+            .orient('vertical')
+            .scale(linear);
+
+            //let legendSize = d3.legendSize()
+
+
+            svgLegend.select(".legendLinear")
+            .call(legendLinear)
+            //.call(legendSize);
+            
+        
+        }
+        fetchMap()
+        setLegend() 
+    </script>
+</body>
+</html>

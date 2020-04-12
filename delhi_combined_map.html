@@ -226,8 +226,8 @@
         xhr.onload = function() {
           var loadedData = []
           var districtData = JSON.parse(xhr.responseText);
-          if (variable == 0) {
-          } else if (variable == 1) {
+          if (variable == 1) {
+          } else if (variable == 0) {
             districtData = districtData.statewise
           }
           console.log(districtData)
@@ -238,11 +238,11 @@
             var targetVariable;
             var stateId;
 
-            if (variable == 0) {
+            if (variable == 1) {
               targetVariable = row[fetchID[variable][sub]]
               stateId = row.district;
             }
-            else if (variable == 1) {
+            else if (variable == 0) {
               targetVariable = row[fetchID[variable][sub]]
               stateId = row.state
             }
