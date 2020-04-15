@@ -1,16 +1,93 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>National Timeline</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <script src="https://d3js.org/d3.v5.min.js"></script>
     <script src="https://d3js.org/d3-geo.v1.min.js"></script>
     <script src="https://unpkg.com/topojson@3"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chroma-js/2.1.0/chroma.min.js" integrity="sha256-gX8uuyxN8stSMHWO9arnnKyenTOALaVAcVB3b6P87e4=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.25.6/d3-legend.js"></script>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans&family=Montserrat:wght@500&family=Raleway:wght@500&display=swap');
+        /*
+            font-family: 'Raleway', sans-serif;
+            font-family: 'Montserrat', sans-serif;
+            font-family: 'Josefin Sans', sans-serif;
+         */
+    </style>
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            margin: 0;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            /*background-image: linear-gradient(to bottom right, #fff, #ddd);*/
+            background-color: #eee
+        }
+
+        .w-row {
+            flex-direction: row;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+        }
+
+        div.title {
+            padding: 0.4em;
+            font-family: 'Raleway', sans-serif;
+            font-size: 1.8rem;
+        }
+
+        span.date-options {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.2rem;
+        }
+
+        text.label {
+            font-family: 'Montserrat', sans-serif;
+            font-size: .8rem;
+        }
+
+        .w-stack {
+            flex-direction: column;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .w-column-80 {
+            flex: 1;
+        }
+
+        .w-column-10 {
+            flex: 1;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .wellowise-data-label {
+            font-weight: 900;
+
+        }
+
+        .w-align-baseline {
+            justify-content: center;
+            align-items: center;
+        }
+
         path.path-region:hover {
             /*fill: #000;*/
             stroke: #888;
@@ -21,28 +98,269 @@
             stroke: #000;
         }
 
-        rect.swatch:hover {
-            stroke: #fff;
+            rect.swatch:hover {
+                stroke: #fff;
+            }
+
+        /* For mobile phones: */
+        [class*="col-"] {
+            width: 100%;
         }
+
+        @media only screen and (min-width: 600px) {
+            /* For tablets: */
+            .col-s-1 {
+                width: 8.33%;
+            }
+
+            .col-s-2 {
+                width: 16.66%;
+            }
+
+            .col-s-3 {
+                width: 25%;
+            }
+
+            .col-s-4 {
+                width: 33.33%;
+            }
+
+            .col-s-5 {
+                width: 41.66%;
+            }
+
+            .col-s-6 {
+                width: 50%;
+            }
+
+            .col-s-7 {
+                width: 58.33%;
+            }
+
+            .col-s-8 {
+                width: 66.66%;
+            }
+
+            .col-s-9 {
+                width: 75%;
+            }
+
+            .col-s-10 {
+                width: 83.33%;
+            }
+
+            .col-s-11 {
+                width: 91.66%;
+            }
+
+            .col-s-12 {
+                width: 100%;
+            }
+
+            span.date-options {
+                font-family: 'Montserrat', sans-serif;
+                font-size: smaller;
+            }
+        }
+
+        @media only screen and (min-width: 768px) {
+            /* For desktop: */
+            .col-1 {
+                width: 8.33%;
+            }
+
+            .col-2 {
+                width: 16.66%;
+            }
+
+            .col-3 {
+                width: 25%;
+            }
+
+            .col-4 {
+                width: 33.33%;
+            }
+
+            .col-5 {
+                width: 41.66%;
+            }
+
+            .col-6 {
+                width: 50%;
+            }
+
+            .col-7 {
+                width: 58.33%;
+            }
+
+            .col-8 {
+                width: 66.66%;
+            }
+
+            .col-9 {
+                width: 75%;
+            }
+
+            .col-10 {
+                width: 83.33%;
+            }
+
+            .col-11 {
+                width: 91.66%;
+            }
+
+            .col-12 {
+                width: 100%;
+            }
+
+            span.date-options {
+                font-family: 'Montserrat', sans-serif;
+                font-size: medium;
+            }
+        }
+
+        .slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 15px;
+            border-radius: 5px;
+            background: #d3d3d3;
+            outline: none;
+            opacity: 0.7;
+            -webkit-transition: .2s;
+            transition: opacity .2s;
+        }
+
+            .slider::-webkit-slider-thumb {
+                -webkit-appearance: none;
+                appearance: none;
+                width: 25px;
+                height: 25px;
+                border-radius: 50%;
+                border-color: #eee;
+                border-width: 0.4em;
+                background: #0098f1;
+                cursor: pointer;
+            }
+
+            .slider::-moz-range-thumb {
+                width: 25px;
+                height: 25px;
+                border-radius: 50%;
+                border-color: #eee;
+                border-width: 0.4em;
+                background: #0098f1;
+                cursor: pointer;
+            }
+
+        .d3-tip {
+            line-height: 1;
+            font-weight: bold;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.8);
+            color: #fff;
+            border-radius: 2px;
+        }
+
+            /* Creates a small triangle extender for the tooltip */
+            .d3-tip:after {
+                box-sizing: border-box;
+                display: inline;
+                font-size: 10px;
+                width: 100%;
+                line-height: 1;
+                color: rgba(0, 0, 0, 0.8);
+                content: "\25BC";
+                position: absolute;
+                text-align: center;
+            }
+
+            /* Style northward tooltips differently */
+            .d3-tip.n:after {
+                margin: -1px 0 0 0;
+                top: 100%;
+                left: 0;
+            }
+
+        div.tooltip {
+            position: absolute;
+            text-align: center;
+            padding: 1em;
+            font-size: 1em;
+            font-family: Calibri;
+            background: #ccc;
+            background-image: linear-gradient(to right, #3ab7ff, #9dffd5);
+            border: 0px;
+            border-radius: 8px;
+            pointer-events: none;
+        }
+
+        span.tooltip-state {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 800;
+        }
+
+        span.tooltip-number {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+        }
+
     </style>
 </head>
 <body>
-    <svg id="wellowise-svg" width="500" height="500" viewBox="0 0 500 500"></svg>
-    <svg id="wellowise-legend" width="300" height="500" viewBox="0 0 300 500"></svg>
-    <h2 class="wellowise-data-label" id="wellowise-date"></h2>
+    <div class="w-row" style="display: flex; max-width: 100%; max-height: 700px; padding: 20px">
+        <div class="title col-8 col-s-10" style="text-align: center">Total Confirmed Covid-19 cases in India till <span id="wellowise-date" class="wellowise-data-label"></span></div>
+        <svg style="max-height: 400px; padding: 0.8em" id="wellowise-svg" viewBox="0 0 500 500" class="col-8 col-s-10"></svg>
+        <div class="w-stack col-8 col-s-10" style="display: flex">
+            <svg id="wellowise-legend" ststyle="width: 100%; text-align: center" viewBox="0 0 600 40"></svg>
+            <div style="text-align: center; width: 100%">
+                <div class="w-row w-align-baseline col-12 col-s-12" style="padding: 1em; display: flex; background-color: #eee;">
+                    <button onclick="runAnimation()" class="col-1 col-s-1" style="background-color: #eee; border: none; text-decoration: none; ">
+                        <i class="material-icons" style="font-size: 2.5em;">play_circle_filled</i>
+                    </button>
+                    <div class="w-row w-align-baseline col-11 col-s-11" style="display: flex">
+                        <span class="date-options" id="wellowise-min-date" style="flex: 2"></span>
+                        <input class="slider" style="flex: 8" id="dateSelector" type="range" min="0" max="100" value="0" step="1" oninput="updateDateFromSlider()" />
+                        <span class="date-options" id="wellowise-max-date" style="flex: 2"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <script>
         // CONSTANTS
-        const extremeColors = ["#fff", "#D50000"]
-        f = chroma.scale([extremeColors[0], extremeColors[1]]).gamma(0.6).domain([0,2000]);
-        const MAX = 2000
+        //"#20798E"
+        //const extremeColors = d3.quantize(d3.interpolateCubehelix("#7AEAC2", "#22323A"), 11)
+        const extremeColors = d3.quantize(d3.interpolateRgbBasis(["#7AEAC2", "#20798E", "#22322a"]), 11)
+        /*const extremeColors = [
+            "#f4ffcf",
+            "#e4ffaf",
+            "#e4ffaf",
+            "#ade6a8",
+            "#7acca3",
+            "#4cb09d",
+            "#209394",
+            "#007687",
+            "#005a74",
+            "#003f5c",
+            "#002e4a"
+        ]*/
+        var MAX = 2000
+        var f = chroma.scale(extremeColors).domain([0, 2000]);
         const MIN = 0
         var fetchedJSON = {}
         var mapData = {}
-        var myInterval;
+        var myInterval = null;
         var onceTouchedRegion = null
         const propertyField = "st_nm"
         var cummulativeData = []
         var dateRanges = []
+        var animationState = false
+        var sliderPosition = 0
+        var tooltip = d3.select("body").append("div")
+            .attr("class", "tooltip")
+            .style("opacity", 0);
+
         const stateObject = {
             "TT": "Total",
             "MH": "Maharashtra",
@@ -126,12 +444,15 @@
 
         function fetchTimelineData() {
             let xhttp = new XMLHttpRequest()
-            xhttp.onreadystatechange = function() {
+            xhttp.onreadystatechange = function () {
                 if (this.readyState == 4 && this.status == 200) {
                     fetchedJSON = JSON.parse(xhttp.responseText)
                     //console.log(fetchedJSON)
                     compileCummulativeData()
-                    runAnimation()
+                    setLegend()
+                    updateDateFromSlider()
+                    document.querySelector('button').disabled = false
+                    //runAnimation()
                 }
             }
             xhttp.open("GET", "https://api.covid19india.org/states_daily.json", true)
@@ -144,43 +465,61 @@
             let cummulativeDatum = {}
             Object.keys(fetchedJSON.states_daily[0]).forEach((v, i) => {
                 if (!(v == "date" || v == "status"))
-                cummulativeDatum[v] = 0
+                    cummulativeDatum[v] = 0
                 else cummulativeDatum[v] = fetchedJSON.states_daily[0][v]
             })
             let tempDatum = JSON.parse(JSON.stringify(cummulativeDatum))
             cummulativeData.push(tempDatum)
-            for (let i = 0; i < fetchedJSON.states_daily.length; i+=3) {
+            for (let i = 0; i < fetchedJSON.states_daily.length; i += 3) {
                 Object.keys(fetchedJSON.states_daily[i]).forEach((v, ind) => {
                     if (!(v == "date" || v == "status")) {
                         let val = fetchedJSON.states_daily[i][v]
                         if (val != "") cummulativeDatum[v] += parseInt(fetchedJSON.states_daily[i][v])
                         else cummulativeDatum[v] += 0
-                    } 
+                        if (v != "tt") MAX = Math.max(MAX, cummulativeDatum[v])
+                    }
                     else if (v == "date") {
-                        
-                        cummulativeDatum[v] = fetchedJSON.states_daily[i][v]
+                        var reggie = /(\d{2})-(\w{3})-(\d{2})/
+                        var dateArray = reggie.exec(fetchedJSON.states_daily[i][v])
+                        //console.log(dateArray)
+                        //var d = new Date(`${dateArray[2]} ${(+dateArray[1])} 2020`)
+                        cummulativeDatum[v] = `${dateArray[2]} ${(+dateArray[1])}, 2020`
                         dateRanges.push(cummulativeDatum[v])
-                        
                     }
                     else cummulativeDatum[v] = fetchedJSON.states_daily[i][v]
                 })
                 let tempDatum = JSON.parse(JSON.stringify(cummulativeDatum))
                 cummulativeData.push(tempDatum)
             }
-            console.log(dateRanges)   
+            document.getElementById('dateSelector').setAttribute('max', dateRanges.length - 1)
+            document.getElementById('wellowise-min-date').textContent = dateRanges[0]
+            document.getElementById('wellowise-max-date').textContent = dateRanges[dateRanges.length - 1]
+            //console.log(MAX)
+            f = chroma.scale(extremeColors).gamma(0.5).domain([0, MAX]);
         }
 
         function changeColor(data, i) {
-            if (i == -1 || data == null) clearInterval(myInterval)
+            if (i > dateRanges.length) {
+                clearInterval(myInterval)
+                myInterval = null;
+                animationState = false
+            }
+            if (i == -1 || data == null) {
+                clearInterval(myInterval)
+                myInterval = null;
+                animationState = false
+            }
             try {
                 document.getElementById("wellowise-date").textContent = data['date']
+                document.getElementById('dateSelector').value = i
+                sliderPosition = i
                 Object.keys(data).forEach((v, i) => {
                     try {
-                        d3.select(`path#${v.toUpperCase()}`).attr('fill',f(data[v])).duration(600)
+                        d3.select(`path#${v.toUpperCase()}`).attr('fill', f(data[v])).duration(600)
                     } catch {
                         //console.log("err")
                     }
-                }) 
+                })
             } finally {
                 i += 1
                 return i
@@ -188,17 +527,29 @@
         }
 
         function runAnimation() {
-            let i = 0
-            myInterval = setInterval(function() {
-                //console.log(i)
-                try {
-                    i = changeColor(cummulativeData[i], i)
-                } catch {
-                    changeColor(null, -1)
-                }
-            }, 800)
+            if (animationState == false) {
+                if (myInterval !== null) clearInterval(myInterval)
+                animationState = true
+                document.querySelector('i').textContent = 'pause_circle_filled'
+                let i = sliderPosition
+                //console.log(sliderPosition)
+                myInterval = setInterval(function () {
+                    //console.log(i)
+                    try {
+                        //console.log(cummulativeData[i], i)
+                        i = changeColor(cummulativeData[i], i)
+                    } catch {
+                        changeColor(null, -1)
+                    }
+                }, 300)
+
+            } else {
+                clearInterval(myInterval)
+                animationState = false
+                document.querySelector('i').textContent = 'play_circle_filled'
+            }
         }
-        
+
         function handleMouseover(name) {
             setSelectedRegion(name)
             onceTouchedRegion.setAttr('fill', "#fff")
@@ -208,10 +559,11 @@
             if (name === null) onceTouchedRegion.setAttr('fill', "#000")
             else onceTouchedRegion.setAttr('fill', "#fff")
         }
-        
+
         function fetchMap() {
+            document.querySelector('button').disabled = true
             let xhttp = new XMLHttpRequest()
-            xhttp.onreadystatechange = function() {
+            xhttp.onreadystatechange = function () {
                 if (this.readyState == 4 && this.status == 200) {
                     fetchTimelineData()
                     mapData = JSON.parse(xhttp.responseText)
@@ -228,111 +580,128 @@
                     //console.log(width, height)
                     //const projection = d3.geoEqualEarth()
                     const projection = d3.geoMercator()
-                    projection.fitSize([width, height], topology)
+                    projection.fitSize([500, 500], topology)
                     const path = d3.geoPath(projection);
                     //console.log(topology.features)
-                    //console.log(path) 
+                    //console.log(path)
                     svg
-                    .append('g')
-                    .attr('class', 'w-states')
-                    .selectAll('path')
-                    .data(topology.features)
-                    .enter()
-                    .append('path')
-                    .attr('d', path)
-                    .attr('class', 'path-region')
-                    .attr('fill', function (d) {
-                        //console.log(d.properties)
-                        return "#fff"
-                    })
-                    .attr('id', function(d) {
-                        return stateReverseMap[d.properties[propertyField]]
-                    })
-                    .attr('pointer-events', 'all')
-                    .on('mouseover', (d) => {
-                        //handleMouseover(d.properties[propertyField]);
-                        //onceTouchedRegion = this
-                        //console.log("Enter:", onceTouchedRegion)
-                    })
-                    .on('mouseout', (d) => {
-                        //setSelectedRegion(null);
-                        //if (onceTouchedRegion === this) onceTouchedRegion = null;
-                        //console.log("Leave: ", onceTouchedRegion)
-                    })
-                    .on('touchstart', (d) => {
-                        
-                        //if (onceTouchedRegion === d) onceTouchedRegion = null;
-                        //else 
-                        onceTouchedRegion = d;
-                        
-                    })
-                    .on('click', (d) => {
-                    //if (onceTouchedRegion) {
-                    //    return;
-                    //}
-                    //if (mapMeta.mapType === MAP_TYPES.STATE) {
-                    //    return;
-                    //}
-                    //changeMap(d.properties[propertyField], mapMeta.mapType);
-                    })
-                    .style('cursor', 'pointer')
-                    .append('title')
-                    .text(function (d) {
-                        const value = d.properties[propertyField]
-                        //console.log(value)
-                    //return (
-                    //    Number(
-                    //    parseFloat(100 * (value / (statistic.total || 0.001))).toFixed(2)
-                    //    ).toString() +
-                    //    '% from ' +
-                    //    toTitleCase(d.properties[propertyField])
-                    //);
-                    });
-                    
+                        .append('g')
+                        .attr('class', 'w-states')
+                        .selectAll('path')
+                        .data(topology.features)
+                        .enter()
+                        .append('path')
+                        .attr('d', path)
+                        .attr('class', 'path-region')
+                        .attr('fill', function (d) {
+                            //console.log(d.properties)
+                            return "#fff"
+                        })
+                        .attr('id', function (d) {
+                            return stateReverseMap[d.properties[propertyField]]
+                        })
+                        .attr('pointer-events', 'all')
+                        .on('mouseover', (d) => {
+                            tooltip.transition()
+                                .duration(100)
+                                .style("opacity", .8);
+                            //console.log(cummulativeData[sliderPosition], stateReverseMap[d.properties[propertyField]])
+                            tooltip.html(`<span class="tooltip-state">${d.properties[propertyField]}</span> <br> No. of confirmed cases: <span class="tooltip-number">${cummulativeData[sliderPosition][stateReverseMap[d.properties[propertyField]].toLowerCase()]}</span>`)
+                                .style("left", (d3.event.pageX) + "px")
+                                .style("top", (d3.event.pageY - 28) + "px");	
+                        })
+                        .on('mouseout', (d) => {
+                            tooltip.transition()
+                                .duration(300)
+                                .style("opacity", 0);	
+                        })
+                        .on('touchstart', (d) => {
+
+                            //if (onceTouchedRegion === d) onceTouchedRegion = null;
+                            //else
+                            onceTouchedRegion = d;
+
+                        })
+                        .on('click', (d) => {
+                            //if (onceTouchedRegion) {
+                            //    return;
+                            //}
+                            //if (mapMeta.mapType === MAP_TYPES.STATE) {
+                            //    return;
+                            //}
+                            //changeMap(d.properties[propertyField], mapMeta.mapType);
+                        })
+                        .style('cursor', 'pointer')
+                        .append('title')
+                        .text(function (d) {
+                            const value = d.properties[propertyField]
+                            //console.log(value)
+                            //return (
+                            //    Number(
+                            //    parseFloat(100 * (value / (statistic.total || 0.001))).toFixed(2)
+                            //    ).toString() +
+                            //    '% from ' +
+                            //    toTitleCase(d.properties[propertyField])
+                            //);
+                        });
+
                     svg
-                    .append('path')
-                    .attr('stroke', '#0008')
-                    .attr('fill', 'none')
-                    .attr('stroke-width', 2)
-                    .attr(
-                    'd',
-                    path(topojson.mesh(mapData, mapData.objects['india']))
-                    );
+                        .append('path')
+                        .attr('stroke', '#0008')
+                        .attr('fill', 'none')
+                        .attr('stroke-width', 2)
+                        .attr(
+                            'd',
+                            path(topojson.mesh(mapData, mapData.objects['india']))
+                        );
                 }
             }
             xhttp.open("GET", "https://raw.githubusercontent.com/covid19india/covid19india-react/master/public/maps/india.json", true)
             xhttp.send()
         }
 
+        function updateDateFromSlider() {
+            sliderPosition = parseInt(document.getElementById('dateSelector').value)
+            document.getElementById("wellowise-date").textContent = dateRanges[sliderPosition]
+            Object.keys(cummulativeData[sliderPosition]).forEach((v, i) => {
+                try {
+                    d3.select(`path#${v.toUpperCase()}`).attr('fill', f(cummulativeData[sliderPosition][v]))
+                } catch {
+                    //console.log("err")
+                }
+            })
+            //console.log(sliderPosition)
+        }
+
         function setLegend() {
-                                
-            let linear = d3.scaleLinear()
-            .domain([0,2000])
-            .range([extremeColors[0], extremeColors[1]]);
+
+            //let quantize = d3.scaleQuantize()   
+            //    .domain([0, Math.ceil(MAX / 100) * 100])
+            //    .range(extremeColors);
+
+            let quantize = d3.scaleSequential(d3.interpolateRgbBasis(extremeColors)).domain([0, Math.ceil(MAX / 100) * 100])
 
             let svgLegend = d3.select("svg#wellowise-legend");
 
             svgLegend.append("g")
-            .attr("class", "legendLinear")
-            .attr("transform", "translate(0, 0)");  
+                .attr("class", "legendLinear")
+                .attr("transform", "translate(0, 0)");
 
             let legendLinear = d3.legendColor()
-            .shapeWidth(50)
-            .cells(11)
-            .orient('vertical')
-            .scale(linear);
+                .shapeWidth(52.5)
+                .cells(11)
+                .orient('horizontal')
+                //.title("Number of confirmed cases of corona virus in India")
+                .scale(quantize);
 
             //let legendSize = d3.legendSize()
 
 
             svgLegend.select(".legendLinear")
-            .call(legendLinear)
+                .call(legendLinear)
             //.call(legendSize);
-            
-        
         }
         fetchMap()
-        setLegend() 
     </script>
 </body>
 </html>
