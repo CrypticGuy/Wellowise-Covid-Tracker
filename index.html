@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <script src="https://d3js.org/d3.v4.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/d3-geo-projection@4"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/chroma-js/2.1.0/chroma.min.js" integrity="sha256-gX8uuyxN8stSMHWO9arnnKyenTOALaVAcVB3b6P87e4=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.25.6/d3-legend.js"></script>
+  <style>
+
+    path {
+      fill: #ccc;
+      stroke: #fff;
+      stroke-width: .5px;
+    }
+      
+    circle {
+      fill: #fff;
+      fill-opacity: 0.4;
+      stroke: #111;
+    }
+
+    path.active {
+      fill: pink;
+    }
+    circle.active {
+      fill: blue;
+    }
+    </style>
+</head>
+
+<body>
+  <script>
+    const extremeColors = d3.quantize(d3.interpolateRgbBasis(["#7AEAC2", "#20798E", "#22322a"]), 11)
+    var MAX = 2000
+    var f = chroma.scale(extremeColors).domain([0, 2000]);
+    const MIN = 0
+    var fetchedJSON = {}
+    var mapData = {}
+    var myInterval = null;
+    var onceTouchedRegion = null
+    const propertyField = "st_nm"
+    var cummulativeData = []
+    var dateRanges = []
+    var animationState = false
+    var sliderPosition = 0
+
+    var width = 960;
+    var height = 500;
+
+    var projection = d3.geoMercator().center([77.15428752700006, 28.623352230000023]).scale(50000).translate([width/2,height/2]);;
+      
+    var path = d3.geoPath()
+      .projection(projection)
+
+    var svg = d3.select("body").append("svg")
+        .attr("width", width)
+        .attr("height", height);
+
+    function fetchMap() {
+        // document.querySelector('button').disabled = true
+        let xhttp = new XMLHttpRequest()
+        xhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                // fetchTimelineData()
+                mapData = JSON.parse(xhttp.responseText)
+                console.log(mapData)
+                svg.selectAll("path")
+                  .data(mapData.features)
+                  .enter().append("path")
+                  .attr("d", path)
+                  .on("mouseover",function(d) {
+                    console.log("just had a mouseover", d3.select(d));
+                    d3.select(this)
+                      .classed("active",true)
+                  })
+                  .on("mouseout",function(d){
+                    d3.select(this)
+                    .classed("active",false)
+                })
+            }
+        }
+        xhttp.open("GET", "https://raw.githubusercontent.com/CrypticGuy/Wellowise-Covid-Tracker/master/ward_data.geojson", true)
+        xhttp.send()
+    }
+
+    fetchMap()
+
+  </script>
+</body>
