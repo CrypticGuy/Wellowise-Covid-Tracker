@@ -30,54 +30,60 @@
 </head>
 
 <body>
+  <div>Currently hovering over: <span id="hover_text"></span></div>
   <script>
-    const extremeColors = d3.quantize(d3.interpolateRgbBasis(["#7AEAC2", "#20798E", "#22322a"]), 11)
-    var MAX = 2000
-    var f = chroma.scale(extremeColors).domain([0, 2000]);
-    const MIN = 0
-    var fetchedJSON = {}
-    var mapData = {}
-    var myInterval = null;
-    var onceTouchedRegion = null
-    const propertyField = "st_nm"
-    var cummulativeData = []
-    var dateRanges = []
-    var animationState = false
-    var sliderPosition = 0
-
     var width = 960;
     var height = 500;
 
-    var projection = d3.geoMercator().center([77.15428752700006, 28.623352230000023]).scale(50000).translate([width/2,height/2]);;
+    
       
-    var path = d3.geoPath()
-      .projection(projection)
+    
 
     var svg = d3.select("body").append("svg")
         .attr("width", width)
         .attr("height", height);
-
+    var data;
     function fetchMap() {
-        // document.querySelector('button').disabled = true
         let xhttp = new XMLHttpRequest()
         xhttp.onreadystatechange = function () {
             if (this.readyState == 4 && this.status == 200) {
                 // fetchTimelineData()
+                // var projection = d3.geoMercator().center([77.15428752700006, 28.623352230000023]).scale(50000).translate([width/2,height/2]);
                 mapData = JSON.parse(xhttp.responseText)
+                var projection = d3.geoMercator()
+                projection.fitSize([960, 500], mapData)
+                var path = d3.geoPath(projection)//.projection(projection)
                 console.log(mapData)
+                data = mapData
                 svg.selectAll("path")
                   .data(mapData.features)
                   .enter().append("path")
                   .attr("d", path)
                   .on("mouseover",function(d) {
-                    console.log("just had a mouseover", d3.select(d));
                     d3.select(this)
                       .classed("active",true)
+                    d3.select('#hover_text').text(d.properties['Ward_Name'])
                   })
                   .on("mouseout",function(d){
                     d3.select(this)
                     .classed("active",false)
-                })
+                  })
+                  .attr('id', function (d) {
+                    return d.properties['Ward_No']
+                  })
+                  .text(function (d) {
+                      console.log(d)
+                      const value = d.properties['Ward_Name']
+                      //console.log(value)
+                      //return (
+                      //    Number(
+                      //    parseFloat(100 * (value / (statistic.total || 0.001))).toFixed(2)
+                      //    ).toString() +
+                      //    '% from ' +
+                      //    toTitleCase(d.properties[propertyField])
+                      //);
+                      return value
+                  });
             }
         }
         xhttp.open("GET", "https://raw.githubusercontent.com/CrypticGuy/Wellowise-Covid-Tracker/master/ward_data.geojson", true)
@@ -85,6 +91,5 @@
     }
 
     fetchMap()
-
   </script>
 </body>
